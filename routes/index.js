@@ -12,8 +12,9 @@ router.post("/register", authController.register);
 router.post("/login", authController.login);
 
 router.post("/admin/access-window", auth, adminController.setAccessWindow);
+router.get("/admin/all-access-windows", auth, adminController.getAllAccessWindows);
 
-router.get("/user/access-status", auth, userController.getAccessStatus);
+router.get("/user/access-status", auth, timeWindow, userController.getAccessStatus);
 
 router.get("/protected", auth, timeWindow, (req, res) => {
   res.json({ message: "Access granted" });
