@@ -13,11 +13,11 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["USER", "ADMIN"],
       default: "USER"
     }
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", userSchema);
+// Explicitly stored in 'users' collection
+module.exports = mongoose.model("User", userSchema, "users");

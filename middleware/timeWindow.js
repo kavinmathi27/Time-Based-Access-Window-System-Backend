@@ -2,6 +2,11 @@ const AccessWindow = require("../models/AccessWindow");
 
 const timeWindowMiddleware = async (req, res, next) => {
   try {
+    // If user is admin, skip time check
+    if (req.user.role === 'ADMIN') {
+      return next();
+    }
+
     const accessWindow = await AccessWindow.findOne({
       userId: req.user.id
     });
@@ -9,14 +14,17 @@ const timeWindowMiddleware = async (req, res, next) => {
     if (!accessWindow) {
       return res.status(403).json({ message: "No access window assigned" });
     }
+
     const now = new Date();
-    if (now < accessWindow.startTime || now > accessWindow.endTime) {
+    // Check if NOW is BEFORE start OR AFTER end
+    if (now < new Date(accessWindow.startTime) || now > new Date(accessWindow.endTime)) {
       return res.status(403).json({
-        message: "Access denied: outside allowed time window"
+        message: "Access denied: You are outside your allowed access window."
       });
     }
     next();
   } catch (error) {
+    console.error("Time window error:", error);
     res.status(500).json({ message: "Time validation failed" });
   }
 };
